@@ -11,3 +11,5 @@ Go programming language has been used to solve the challenges. I have been learn
 | 3 | 1 | rune, string to rune conversion & vice-versa                  |
 | 3 | 2 | go test                                                       |
 | 4 | 2 | pointers, pass by reference, dereference pointers             |
+| 5 | 2 | Go compilation/execution time vs Python execution time        |
+| 7 | 1 | iota, type, struct => class, enum implementation              |
