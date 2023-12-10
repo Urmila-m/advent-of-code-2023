@@ -54,7 +54,7 @@ func FindNumOfSteps(instructions string, network map[string]map[string]string, f
 	steps := 0
 	path := make([]string, 0)
 	for {
-		if string(instructions[steps%len(instructions)]) == "L" {
+		if instructions[steps%len(instructions)] == 'L' {
 			steps++
 			next := network[from]["left"]
 			path = append(path, next)
@@ -80,7 +80,7 @@ func FindNumOfSteps(instructions string, network map[string]map[string]string, f
 func FindAllPaths(instructions string, network map[string]map[string]string) []Path {
 	allSrcToDst := make([]Path, 0)
 	for node, _ := range network {
-		if string(node[2]) == "A" {
+		if node[len(node)-1] == 'A' {
 			//find number of steps
 			from := node
 			start := node
@@ -88,11 +88,11 @@ func FindAllPaths(instructions string, network map[string]map[string]string) []P
 			dest := ""
 			steps := 0
 			for {
-				if string(instructions[steps%len(instructions)]) == "L" {
+				if instructions[steps%len(instructions)] == 'L' {
 					steps++
 					next := network[from]["left"]
 					path = append(path, next)
-					if string(next[2]) == "Z" {
+					if next[len(next)-1] == 'Z' {
 						dest = next
 						break
 					} else {
@@ -102,7 +102,7 @@ func FindAllPaths(instructions string, network map[string]map[string]string) []P
 					steps++
 					next := network[from]["right"]
 					path = append(path, next)
-					if string(next[2]) == "Z" {
+					if next[len(node)-1] == 'Z' {
 						dest = next
 						break
 					} else {
