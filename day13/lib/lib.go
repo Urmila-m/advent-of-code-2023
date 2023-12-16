@@ -108,12 +108,12 @@ func CompareString(str1 string, str2 string) []int {
 }
 
 func FindSmudgeHorizontalMirror(chunk []string) (mirrorXWithSmudge int, existsWithSmudge bool) {
-	smudgeFound := false
-	mirrorXWithSmudge = 0
 	prevMirrorsX, prevExists := FindHorizontalMirror(chunk)
 	for i := 0; i < len(chunk)-1; i++ {
-		for j := i + 1; j < len(chunk); j++ {
-			noMatches := CompareString(chunk[i], chunk[j])
+		prevLine := chunk[i]
+		for j := i + 1; j < len(chunk); j += 2 {
+			nextLine := chunk[j]
+			noMatches := CompareString(prevLine, nextLine)
 			if len(noMatches) == 1 {
 				tmp := chunk[i]
 				chunk[i] = chunk[j]
@@ -122,24 +122,18 @@ func FindSmudgeHorizontalMirror(chunk []string) (mirrorXWithSmudge int, existsWi
 					if prevExists {
 						for _, mirrorX := range mirrorsX {
 							if mirrorX != prevMirrorsX[0] {
-								mirrorXWithSmudge = mirrorX
+								return mirrorX, true
 							}
 						}
 					} else {
-						mirrorXWithSmudge = mirrorsX[0]
+						return mirrorsX[0], true
 					}
-					smudgeFound = true
-					break
-				} else {
-					chunk[i] = tmp
 				}
+				chunk[i] = tmp
 			}
 		}
-		if smudgeFound {
-			break
-		}
 	}
-	return mirrorXWithSmudge, smudgeFound
+	return 0, false
 }
 
 func FindSmudgeVerticalMirror(chunk []string) (mirrorYWithSmudge int, existsWithSmudge bool) {
@@ -155,9 +149,9 @@ func SummarizeNotesWithSmudge(filePath string) int {
 		} else {
 			mirrorY, verticalExists := FindSmudgeVerticalMirror(chunk)
 			if verticalExists {
-				if verticalExists {
-					sum += mirrorY
-				}
+				sum += mirrorY
+			} else {
+				log.Panicf("No mirror line found!")
 			}
 		}
 	}

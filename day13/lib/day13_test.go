@@ -26,7 +26,7 @@ func TestParseFile(t *testing.T) {
 			"#....#..#",
 		},
 	}
-	assert.Equal(t, expectedOp, ParseFile("test_input.txt"))
+	assert.Equal(t, expectedOp, ParseFile("test_input2.txt"))
 }
 
 func TestFindHorizontalMirror(t *testing.T) {
