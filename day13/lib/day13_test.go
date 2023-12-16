@@ -69,6 +69,13 @@ func TestFindSmudgeHorizontalMirror(t *testing.T) {
 	assert.Equal(t, 5, mirrorX)
 }
 
+func TestFindSmudgeVerticalMirror(t *testing.T) {
+	chunk := ParseFile("test_input4.txt")[0]
+	mirrorY, exists := FindSmudgeVerticalMirror(chunk)
+	assert.Equal(t, true, exists)
+	assert.Equal(t, 9, mirrorY)
+}
+
 func TestSummarizeNotesWithSmudge(t *testing.T) {
 	assert.Equal(t, 400, SummarizeNotesWithSmudge("test_input2.txt"))
 }

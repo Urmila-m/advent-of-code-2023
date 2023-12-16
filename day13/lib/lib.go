@@ -34,11 +34,12 @@ func ParseFile(filePath string) [][]string {
 	return chunks
 }
 
-func FindHorizontalMirror(chunk []string) (allMirrorsX []int, exists bool) {
+func FindHorizontalMirror(chunk []string) (allMirrorsX []int, atLeastOneMirrorExists bool) {
 	allMirrorsX = make([]int, 0)
+	atLeastOneMirrorExists = false
 	for i := 0; i < len(chunk)-1; i++ {
 		if chunk[i] == chunk[i+1] {
-			exists = true
+			exists := true
 			j := 0
 			for (i+1+j) < len(chunk) && (i-j) >= 0 {
 				upper := chunk[i-j]
@@ -50,12 +51,13 @@ func FindHorizontalMirror(chunk []string) (allMirrorsX []int, exists bool) {
 				j++
 			}
 			if exists {
+				atLeastOneMirrorExists = true
 				mirrorX := i + 1
 				allMirrorsX = append(allMirrorsX, mirrorX)
 			}
 		}
 	}
-	return allMirrorsX, exists
+	return allMirrorsX, atLeastOneMirrorExists
 }
 
 func FindMatrixTranspose(matrix []string) []string {
@@ -81,14 +83,12 @@ func SummarizeNotes(filePath string) int {
 	for _, chunk := range ParseFile(filePath) {
 		if mirrorsX, exists := FindHorizontalMirror(chunk); exists {
 			for _, mirrorX := range mirrorsX {
-				fmt.Print(mirrorX)
 				sum += 100 * mirrorX
 			}
 		} else {
 			mirrorsY, verticalExists := FindVerticalMirror(chunk)
 			if verticalExists {
 				for _, mirrorY := range mirrorsY {
-					fmt.Print(mirrorY)
 					sum += mirrorY
 				}
 			}
@@ -155,7 +155,9 @@ func SummarizeNotesWithSmudge(filePath string) int {
 		} else {
 			mirrorY, verticalExists := FindSmudgeVerticalMirror(chunk)
 			if verticalExists {
-				sum += mirrorY
+				if verticalExists {
+					sum += mirrorY
+				}
 			}
 		}
 	}
