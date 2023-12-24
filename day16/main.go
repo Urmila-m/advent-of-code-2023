@@ -26,5 +26,6 @@ func puzzleTwo(matrix []string) int {
 
 func main() {
 	matrix := lib.ParseFile("puzzle_input.txt")
+	fmt.Println(puzzleOne(matrix))
 	fmt.Println(puzzleTwo(matrix))
 }
