@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -40,14 +41,18 @@ const (
 )
 
 type Point struct {
-	x int
-	y int
+	X int
+	Y int
 }
 
 type State struct {
 	GridElem  rune
 	Position  Point
 	Direction Direction
+}
+
+func (s State) Display() {
+	fmt.Printf("{'%c', {%d, %d}, %s}\n", s.GridElem, s.Position.X, s.Position.Y, s.Direction)
 }
 
 func NextState(s1 State, matrix []string) []State {
@@ -57,9 +62,9 @@ func NextState(s1 State, matrix []string) []State {
 	var nextElem rune
 	switch s1.Direction {
 	case Right:
-		if (s1.Position.y + 1) < len(matrix[0]) {
-			nextElemPosition = Point{s1.Position.x, s1.Position.y + 1}
-			nextElem = rune(matrix[nextElemPosition.x][nextElemPosition.y])
+		if (s1.Position.Y + 1) < len(matrix[0]) {
+			nextElemPosition = Point{s1.Position.X, s1.Position.Y + 1}
+			nextElem = rune(matrix[nextElemPosition.X][nextElemPosition.Y])
 			switch nextElem {
 			case '|':
 				directions = append(directions, Up, Down)
@@ -72,9 +77,9 @@ func NextState(s1 State, matrix []string) []State {
 			}
 		}
 	case Left:
-		if (s1.Position.y - 1) >= 0 {
-			nextElemPosition = Point{s1.Position.x, s1.Position.y - 1}
-			nextElem = rune(matrix[nextElemPosition.x][nextElemPosition.y])
+		if (s1.Position.Y - 1) >= 0 {
+			nextElemPosition = Point{s1.Position.X, s1.Position.Y - 1}
+			nextElem = rune(matrix[nextElemPosition.X][nextElemPosition.Y])
 			switch nextElem {
 			case '|':
 				directions = append(directions, Up, Down)
@@ -87,9 +92,9 @@ func NextState(s1 State, matrix []string) []State {
 			}
 		}
 	case Up:
-		if (s1.Position.x - 1) >= 0 {
-			nextElemPosition = Point{s1.Position.x - 1, s1.Position.y}
-			nextElem = rune(matrix[nextElemPosition.x][nextElemPosition.y])
+		if (s1.Position.X - 1) >= 0 {
+			nextElemPosition = Point{s1.Position.X - 1, s1.Position.Y}
+			nextElem = rune(matrix[nextElemPosition.X][nextElemPosition.Y])
 			switch nextElem {
 			case '-':
 				directions = append(directions, Left, Right)
@@ -102,9 +107,9 @@ func NextState(s1 State, matrix []string) []State {
 			}
 		}
 	case Down:
-		if (s1.Position.x + 1) < len(matrix) {
-			nextElemPosition = Point{s1.Position.x + 1, s1.Position.y}
-			nextElem = rune(matrix[nextElemPosition.x][nextElemPosition.y])
+		if (s1.Position.X + 1) < len(matrix) {
+			nextElemPosition = Point{s1.Position.X + 1, s1.Position.Y}
+			nextElem = rune(matrix[nextElemPosition.X][nextElemPosition.Y])
 			switch nextElem {
 			case '-':
 				directions = append(directions, Left, Right)
@@ -128,41 +133,66 @@ func NextState(s1 State, matrix []string) []State {
 }
 
 func Traverse(startState State, matrix []string, path []State) []State {
-	traversalPath := make([]State, 0)
-	if newStates := NextState(startState, matrix); newStates != nil {
+	pathLen := len(path)
+	if newStates := NextState(startState, matrix); len(newStates) != 0 {
 		for _, state := range newStates {
 			if !slices.Contains(path, state) {
-				traversalPath = append(traversalPath, state)
-				traversalPath = append(traversalPath, Traverse(state, matrix, path)...)
+				path = append(path, state)
+				path = append(path, Traverse(state, matrix, path)...)
 			}
 		}
 	}
-	return traversalPath
+	return path[pathLen:]
 }
 
-func TraverseLoop(startState State, matrix []string, path []State) []State {
-	remainingStates := make([]State, 0)
-	for {
-		if len(path) > 0 && slices.Contains(path[:len(path)-1], startState) {
-			break
-		}
-		newStates := NextState(startState, matrix)
-		if len(newStates) == 0 {
-			break
-		} else {
-			startState = newStates[0]
-			path = append(path, startState)
-			if len(newStates) > 1 {
-				remainingStates = append(remainingStates, newStates[1:]...)
-			}
+func FindUniqGridElems(path []State) map[Point]struct{} {
+	uniq := make(map[Point]struct{})
+	for _, s := range path {
+		if _, ok := uniq[s.Position]; !ok {
+			uniq[s.Position] = struct{}{}
 		}
 	}
-	if len(remainingStates) != 0 {
-		for _, state := range remainingStates {
-			if !slices.Contains(path, state) {
-				path = append(path, TraverseLoop(state, matrix, path)...)
-			}
+	return uniq
+}
+
+func FindInitialStates(matrix []string) []State {
+	initialStates := make([]State, 0)
+	for i := 0; i < len(matrix); i++ {
+		initialStates = append(initialStates, State{
+			GridElem:  '.',
+			Position:  Point{i, -1},
+			Direction: Right,
+		})
+		initialStates = append(initialStates, State{
+			GridElem:  '.',
+			Position:  Point{i, len(matrix[0])},
+			Direction: Left,
+		})
+	}
+	for j := 0; j < len(matrix[0]); j++ {
+		initialStates = append(initialStates, State{
+			GridElem:  '.',
+			Position:  Point{-1, j},
+			Direction: Down,
+		})
+		initialStates = append(initialStates, State{
+			GridElem:  '.',
+			Position:  Point{len(matrix), j},
+			Direction: Up,
+		})
+	}
+	return initialStates
+}
+
+func FindMostEfficientConfig(matrix []string) (Point, int) {
+	mostEfficientStartPoint := Point{-1, -1}
+	highestEnergizedGridNums := -1
+	for _, s := range FindInitialStates(matrix) {
+		numOfEnergizedGrids := len(FindUniqGridElems(Traverse(s, matrix, make([]State, 0))))
+		if (mostEfficientStartPoint.X == -1 && mostEfficientStartPoint.Y == -1) || (highestEnergizedGridNums < numOfEnergizedGrids) {
+			mostEfficientStartPoint = s.Position
+			highestEnergizedGridNums = numOfEnergizedGrids
 		}
 	}
-	return path
+	return mostEfficientStartPoint, highestEnergizedGridNums
 }
