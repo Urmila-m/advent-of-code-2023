@@ -32,8 +32,8 @@ func ParseFile(filePath string) []string {
 }
 
 type Point struct {
-	x int
-	y int
+	X int
+	Y int
 }
 
 type Pipe struct {
@@ -46,57 +46,57 @@ func (pipe Pipe) FindAdjacentPipes(lines []string) map[Point]rune {
 	adjPipes := make(map[Point]rune)
 	switch pipe.Letter {
 	case 'L':
-		pos1 := Point{pipe.Position.x - 1, pipe.Position.y}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X - 1, pipe.Position.Y}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x, pipe.Position.y + 1}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X, pipe.Position.Y + 1}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	case 'J':
-		pos1 := Point{pipe.Position.x - 1, pipe.Position.y}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X - 1, pipe.Position.Y}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x, pipe.Position.y - 1}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X, pipe.Position.Y - 1}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	case '7':
-		pos1 := Point{pipe.Position.x + 1, pipe.Position.y}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X + 1, pipe.Position.Y}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x, pipe.Position.y - 1}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X, pipe.Position.Y - 1}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	case 'F':
-		pos1 := Point{pipe.Position.x + 1, pipe.Position.y}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X + 1, pipe.Position.Y}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x, pipe.Position.y + 1}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X, pipe.Position.Y + 1}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	case 'S':
 		allPositionValidChars := map[Point][]rune{
-			Point{x: pipe.Position.x + 1, y: pipe.Position.y}: []rune{'|', 'J', 'L'},
-			Point{x: pipe.Position.x, y: pipe.Position.y - 1}: []rune{'-', 'F', 'L'},
-			Point{x: pipe.Position.x, y: pipe.Position.y + 1}: []rune{'-', '7', 'J'},
-			Point{x: pipe.Position.x - 1, y: pipe.Position.y}: []rune{'|', '7', 'F'},
+			Point{X: pipe.Position.X + 1, Y: pipe.Position.Y}: []rune{'|', 'J', 'L'},
+			Point{X: pipe.Position.X, Y: pipe.Position.Y - 1}: []rune{'-', 'F', 'L'},
+			Point{X: pipe.Position.X, Y: pipe.Position.Y + 1}: []rune{'-', '7', 'J'},
+			Point{X: pipe.Position.X - 1, Y: pipe.Position.Y}: []rune{'|', '7', 'F'},
 		}
 
 		for position, validChars := range allPositionValidChars {
-			if position.x >= 0 && position.x < len(lines) && position.y >= 0 && position.y < len(lines[0]) {
-				actualChar := rune(lines[position.x][position.y])
+			if position.X >= 0 && position.X < len(lines) && position.Y >= 0 && position.Y < len(lines[0]) {
+				actualChar := rune(lines[position.X][position.Y])
 				if slices.Contains(validChars, actualChar) {
 					adjPipes[position] = actualChar
 				}
 			}
 		}
 	case '-':
-		pos1 := Point{pipe.Position.x, pipe.Position.y - 1}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X, pipe.Position.Y - 1}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x, pipe.Position.y + 1}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X, pipe.Position.Y + 1}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	case '|':
-		pos1 := Point{pipe.Position.x - 1, pipe.Position.y}
-		adjPipes[pos1] = rune(lines[pos1.x][pos1.y])
+		pos1 := Point{pipe.Position.X - 1, pipe.Position.Y}
+		adjPipes[pos1] = rune(lines[pos1.X][pos1.Y])
 
-		pos2 := Point{pipe.Position.x + 1, pipe.Position.y}
-		adjPipes[pos2] = rune(lines[pos2.x][pos2.y])
+		pos2 := Point{pipe.Position.X + 1, pipe.Position.Y}
+		adjPipes[pos2] = rune(lines[pos2.X][pos2.Y])
 	}
 	return adjPipes
 }
@@ -140,11 +140,11 @@ func FindAreaUsingShoeLace(coordsArr []Point) float64 {
 	positiveArea := 0
 	negativeArea := 0
 	for i, coords := range coordsArr[:len(coordsArr)-1] {
-		positiveArea += coords.x * coordsArr[i+1].y
-		negativeArea += coords.y * coordsArr[i+1].x
+		positiveArea += coords.X * coordsArr[i+1].Y
+		negativeArea += coords.Y * coordsArr[i+1].X
 	}
-	positiveArea += coordsArr[len(coordsArr)-1].x * coordsArr[0].y
-	negativeArea += coordsArr[len(coordsArr)-1].y * coordsArr[0].x
+	positiveArea += coordsArr[len(coordsArr)-1].X * coordsArr[0].Y
+	negativeArea += coordsArr[len(coordsArr)-1].Y * coordsArr[0].X
 	netArea := math.Abs(float64(positiveArea-negativeArea)) / 2
 	return netArea
 }
